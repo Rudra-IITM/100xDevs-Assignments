@@ -1,0 +1,2 @@
+Explanation: The output is undefined it means the file is null. It starts reading the file and simultaneously executes the code. The function will be called once the file has been read meanwhile the ‘readFile called’ statement is printed then the contents of the file are printed.
+Example 2: 
