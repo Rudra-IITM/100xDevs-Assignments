@@ -44,6 +44,57 @@
   
   const app = express();
   
+  var todoList = [];
+
   app.use(bodyParser.json());
+
+  app.get("/todos", (req, res) => {
+    return res.status(200).json(todoList);
+  })
+
+  app.get("/todos/:id", (req, res) => {
+    const _id = parseInt(req.params.id);
+    const todo = todoList.find( (t) => {
+      t.id === _id;
+    })
+    if (!todo){
+      res.status(404).send();
+    }
+    res.status(200).json(todo);
+  })
+
+  app.post("/todos", (req, res) => {
+    const newItem = {
+      id: todoList.length,
+      title: req.body.title,
+      description: req.body.description
+    }
+    todoList.push(newItem);
+    res.status(201).json(newItem)
+  })
+
+  app.put("/todos/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+    if (id<0 || id >= todoList.length){
+      return res.status(404).send();
+    }
+    const toUpdate = req.body;
+    toUpdate["id"] =id;
+    todoList[id]=toUpdate;
+    return res.status(200).send();
+  })
+
+  app.delete("/todos/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+    if (id<0 || id >= todoList.length){
+      return res.status(404).send();
+    }
+    todoList.splice(id, 1);
+    return res.status(200).send();
+  })
+
+  app.use((req, res, next) => {
+    return res.status(404).send();
+  })
   
   module.exports = app;

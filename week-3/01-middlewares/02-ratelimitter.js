@@ -16,6 +16,17 @@ setInterval(() => {
     numberOfRequestsForUser = {};
 }, 1000)
 
+app.use( (req, res, next) => {
+  const userId = req.headers['user-id'];
+  if (!userId || numberOfRequestsForUser[userId]>5){
+    return res.status(404).send();
+  }
+  if (!numberOfRequestsForUser[userId]) {
+    numberOfRequestsForUser[userId] = 1;
+  } else { numberOfRequestsForUser[userId]++; }
+  next();
+})
+
 app.get('/user', function(req, res) {
   res.status(200).json({ name: 'john' });
 });
@@ -23,5 +34,10 @@ app.get('/user', function(req, res) {
 app.post('/user', function(req, res) {
   res.status(200).json({ msg: 'created dummy user' });
 });
+
+app.use( (err, req, res, next) => {
+  res.status(404).send();
+  next();
+})
 
 module.exports = app;
